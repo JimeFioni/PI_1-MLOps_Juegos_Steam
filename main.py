@@ -1,9 +1,20 @@
+"""
+AQUI SE ENCUENTRAN LAS FUNCIONES CREADAS PARA EL PROYECTO INTEGRADOR 1 
+MLOPS - STEAM GAMES - 
 
+FUNCIONES PARA ALIMENTAR LA API
+"""
 
 #librerías
+from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
 import pandas as pd
 
-#dataframes
+#instanciar la aplicación
+
+app = FastAPI()
+
+#dataframes que se utilizan en las funciones de la API
 user_reviews = pd.read_parquet("data/user_review.parquet")
 cant_items = pd.read_parquet("data/cant_items.parquet")
 recommend = pd.read_parquet("data/recommend.parquet")
