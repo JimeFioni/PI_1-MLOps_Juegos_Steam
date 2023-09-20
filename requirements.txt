@@ -1,6 +1,6 @@
-fastapi==0.103.1
-numpy==1.26.0
-pandas==2.1.0
-uvicorn==0.23.2
+fastapi
+numpy
+pandas
+uvicorn
 pyarrow
 fastparquet
