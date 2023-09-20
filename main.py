@@ -14,6 +14,7 @@ import pandas as pd
 
 app = FastAPI()
 
+
 #dataframes que se utilizan en las funciones de la API
 user_reviews = pd.read_parquet("data/user_review.parquet")
 cant_items = pd.read_parquet("data/cant_items.parquet")
@@ -23,9 +24,9 @@ user_hours = pd.read_parquet("data/user_hours.parquet")
 devs = pd.read_parquet("data/devs.parquet")
 sentimiento_analysis = pd.read_parquet("data/sentimiento_analysis.parquet")
 
-
-
-def userdata(user_id):
+#Primera función
+@app.get("/userdata/{user_id}", name = "USERDATA")
+async def userdata(user_id : str):
     """
     La siguiente función retorna información sobre el usuario que se le pasa como argumento
 
