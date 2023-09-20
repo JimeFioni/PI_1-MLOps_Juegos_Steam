@@ -81,7 +81,7 @@ async def userdata(user_id : str):
             user (dict): Información de un usuario ,
             -cantidad de dinero gastado (int): Dinero gastado por usuario
             -Porcentaje de recomendación usuario (float): Reviews realizadas por el usuario con respecto a la cantidad de 
-            reviews poe usuario
+            reviews por usuario
             -cantidad de items (int):cantidad de juegos consumidos por usuario 
     
     Ejemplo:
