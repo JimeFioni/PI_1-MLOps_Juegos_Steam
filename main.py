@@ -24,6 +24,15 @@ user_hours = pd.read_parquet("data/user_hours.parquet")
 devs = pd.read_parquet("data/devs.parquet")
 sentimiento_analysis = pd.read_parquet("data/sentimiento_analysis.parquet")
 
+
+
+@app.get("/")
+async def incio ():
+    return {"message": "Welcome to the MLOps project"}
+
+
+
+
 #Primera función
 @app.get("/userdata/{user_id}", name = "USERDATA")
 async def userdata(user_id : str):
@@ -31,13 +40,19 @@ async def userdata(user_id : str):
     La siguiente función retorna información sobre el usuario que se le pasa como argumento
 
     Parametro: 
+    
             user_id(str) : ID del Usuario a consultar.
     Retorna:
+    
             user (dict): Información de un usuario ,
             -cantidad de dinero gastado (int): Dinero gastado por usuario
             -Porcentaje de recomendación usuario (float): Reviews realizadas por el usuario con respecto a la cantidad de 
             reviews poe usuario
             -cantidad de items (int):cantidad de juegos consumidos por usuario 
+    
+    Ejemplo:
+    
+            user_id: js41637
     """
 
     #igualo el user_id al user_id del dataframe con los datos de los reviews 
@@ -62,15 +77,26 @@ async def userdata(user_id : str):
     
 
 
-def countreviews(f_inicio,f_final):
+
+
+#Segunda función
+@app.get("/countreviews/{f_inicio}/{f_final}", name = "COUNTREVIEWS")
+async def countreviews(f_inicio,f_final):
     """
-    La siguiente función retorna la cantidad de usuarios que realizaron reviews y el porcentaje de reviews de estos con respecto al total de usuarios en un ranfo de fechas
+    La siguiente función retorna la cantidad de usuarios que realizaron reviews y el porcentaje de reviews de estos con respecto al total de usuarios en un rango de fechas
+
     Parametros:
+    
             -f_inicio(str/datetime): Fecha de inicio del rango a evaluar 
             -f_final(str/datetime): Fecha final del rango a evaluar 
-    Retorna
+    Retorna:
+    
             -Cantidad de usuarios: con reseñas dentro de ese período de tiempo
             -Porcentaje de reviews entre fechas : del usuario con respecto al total en el período
+    Ejemplo:
+    
+            f_inicio = 2011-11-25
+            f_final = 2011-12-18
     """
 
     #convierte las fechas a objetos datetime en el caso de que no lo estén
@@ -93,32 +119,51 @@ def countreviews(f_inicio,f_final):
 
 
 
-def genre(genero):
+
+
+#Tercera función
+@app.get("/genre/{genero}", name = "GENRE")
+async def genre(genero):
     """
     La siguiente función retorna el ranking en que se ubica el genero que se le ingresa de acuerdo a "playtime_forever"
+    
     Parametros:
+    
             - genero (str): el genero de juegos Steam que se quiera conocer el tiempo jugado
     Retorna:
+    
             - orden: La ubicación dentro de ranking de acuerdo a la columna "playtime_forever"
+    Ejemplo:
+    
+            -genero: Action
     """ 
     #filtro el dataframe "rank_genre" para quesu columna "genres" sea igual a el dato que se ingresa
     # a partir de esto se selecciona la columna "ranking" del conjunto resultante y se bloquea para obtener el valor
     orden= rank_genre[rank_genre["genres"]== genero]["ranking"].iloc[0]
     return {
         "El género": genero, 
-        "se ubica en el raking de PlayTimeForever": orden
+        "se ubica en el raking de PlayTimeForever": int(orden)
     }
 
 
 
 
-def userforgenre (genero):
+
+# Cuarta función
+@app.get("/userforgenre/{genre}", name = "USERFORGENRE")
+async def userforgenre (genero):
     """
     La siguiente función retorna el TOP 5 de usuarios junto a su información, con mayor horas de juego en el genero que se le indica
+    
     Parametros:
+    
             -genero (str): El genero de juego Steam del que se necesita conocer el TOP 5 de usuarios
     Retorna:
+    
             -top_5_users(list) : Lista ordenada por horas de juego "playtime_forever", en forma descendente, conteniendo los nombres de usuario y dirección url
+    Ejemplo:
+    
+            -genero: RPG
     """
 
     #se filtra el dataframe con la columna "genres" y se la iguala con el dato ingresado
@@ -126,20 +171,31 @@ def userforgenre (genero):
 
     #extrae los primeros 5 
     top_5_users= genre_data.head(5)
-    return top_5_users
+    top_5= top_5_users.to_dict(orient="records")
+    return top_5
 
 
 
-def developer(desarrollador):
+
+
+
+#Quinta función
+@app.get("/developer/{desarrollador}", name = "DEVELOPER")
+async def developer(desarrollador):
     """
     La siguiente función retorna la cantidad y porcentaje de juegos gratis por desarrollador y año
 
     Parametros:
+    
             -desarrollador (str): El desarrollador del juego Steam que se ingresa 
-    Retorna: un dataframe
+    Retorna: 
+    
             -Año: año en que se da el estreno del juego 
             -Cantidad de items por año: cantidad de juegos publicados por el desarrollador en el año 
             -Porcentaje de juegos free: porcentaje de juegos gratis con respecto a los publicados en ese año
+    Ejemplo:
+    
+            -Poolians.com
     """
     
     #Se filtra el dataframe devs para igualarlo al dato que se ingresa
@@ -157,20 +213,30 @@ def developer(desarrollador):
         "Cantidad de items por año" : cantidad.values, #valor
         "Porcentaje de juegos free" : porcentaje_gratis.values #valor
     })
+    tabla= tabla.to_dict(orient="records")
     return tabla
 
 
 
-def sentiment_analysis(anio):
+
+
+#Sexta función
+@app.get("/sentimet_analysis/{anio}", name = "SENTIMENT_ANALYSIS")
+async def sentiment_analysis(anio):
 
     """
     La siguiente función retorna el resultado de los analisis de sentimiento por año ingresado, 
     se tiene en cuenta el año de estreno del juego.
+    
     Paramentros: 
+    
             - anio (int): Año de estreno del juego
     Retorna:
+    
             - count_sentiment : una lista del conteo de sentimientos
-        
+    Ejemplo:
+    
+            -anio: 2015
     """
     #Se filtran las reviews por año y las igualo al año que se ingresa en la consulta transformandolo en string 
     reviews_por_anio= sentimiento_analysis[sentimiento_analysis["release_anio"]== str(anio)]
