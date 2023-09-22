@@ -103,7 +103,7 @@ Para el deploy de la API se seleccionó la plataforma Render que es una nube uni
 
 ### Video
 
-La explicación y demostración del funcionamiento de la API en el [Video]
+La explicación y demostración del funcionamiento de la API en el [Video](https://www.loom.com/share/da27c683d13a4c708b33ec0a1db81d6c?sid=4dab1e91-66f6-416e-8d1a-6005bc0f3f3e)
 
 ### Conclusiones 
 
