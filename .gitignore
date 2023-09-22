@@ -4,3 +4,5 @@ venv/
 env
 env/
 /env
+./data/user_items.parquet
+./data/user_reviews.parquet
