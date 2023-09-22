@@ -333,6 +333,5 @@ async def recomendacion_juego(id):
     juegos_recomendados = modelo_render.iloc[indices_juegos_similares]['app_name']
     #juegos_recomendados=juegos_recomendados.to_dict()
     
-    return { 
-            "Juegos recomendados": juegos_recomendados
-            }
+    return juegos_recomendados
+#{ "Juegos recomendados": juegos_recomendados}
