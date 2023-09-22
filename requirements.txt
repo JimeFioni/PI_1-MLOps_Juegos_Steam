@@ -6,3 +6,4 @@ pyarrow
 fastparquet
 matplotlib
 seaborn
+scikit-learn
