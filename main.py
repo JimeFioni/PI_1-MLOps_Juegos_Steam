@@ -9,6 +9,8 @@ FUNCIONES PARA ALIMENTAR LA API
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 import pandas as pd
+import scipy as sp
+from sklearn.metrics.pairwise import cosine_similarity
 
 #instanciar la aplicación
 
@@ -23,7 +25,7 @@ rank_genre = pd.read_parquet("data/rank_genre.parquet")
 user_hours = pd.read_parquet("data/user_hours.parquet")
 devs = pd.read_parquet("data/devs.parquet")
 sentimiento_analysis = pd.read_parquet("data/sentimiento_analysis.parquet")
-
+modelo_item= pd.read_parquet("data/modelo_item.parquet")
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -292,3 +294,39 @@ async def sentiment_analysis(anio):
     count_sentiment ={"Negative": Negativos , "Neutral" : Neutral, "Positive": Positivos}
     
     return count_sentiment
+
+
+
+
+#Modelo de recomendacion item_item
+@app.get("/recomendacion_juego/{id}", name= "RECOMENDACION_JUEGO")
+async def recomendacion_juego(id):
+    
+    """La siguiente funcion genera una lista de 5 juegos similares a un juego dado (id)
+    Parametros:
+        -id (int): El id del juego para el que se desean encontrar juegos similares
+
+    Returna:
+        -dict Un diccionario con 5 juegos similares 
+    """
+    id = int(id)
+    # Filtrar el juego e igualarlo a  su ID
+    juego_seleccionado = modelo_item[modelo_item['id'] == id]
+    # devolver error en caso de vacio
+    if juego_seleccionado.empty:
+        return "El juego con el ID especificado no existe en la base de datos."
+    
+    # Calcular la matriz de similitud coseno
+    similitudes = cosine_similarity(modelo_item.iloc[:,3:])
+    
+    # Calcula la similitud del juego que se ingresa con otros juegos del dataframe
+    similarity_scores = similitudes[modelo_item[modelo_item['id'] == id].index[0]]
+    
+    # Calcula los índices de los juegos más similares (excluyendo el juego de entrada)
+    indices_juegos_similares = similarity_scores.argsort()[::-1][1:6]
+    
+    # Obtener los nombres de los juegos 5 recomendados
+    juegos_recomendados = modelo_item.iloc[indices_juegos_similares]['app_name']
+    juegos_recomendados=juegos_recomendados.to_dict(orient="records")
+    
+    return juegos_recomendados
