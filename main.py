@@ -304,10 +304,13 @@ async def sentiment_analysis(anio):
 async def recomendacion_juego(id):
     
     """La siguiente funcion genera una lista de 5 juegos similares a un juego dado (id)
+    
     Parametros:
+    
         -id (int): El id del juego para el que se desean encontrar juegos similares
 
     Returna:
+    
         -dict Un diccionario con 5 juegos similares 
     """
     id = int(id)
@@ -328,6 +331,6 @@ async def recomendacion_juego(id):
     
     # Obtener los nombres de los juegos 5 recomendados
     juegos_recomendados = modelo_render.iloc[indices_juegos_similares]['app_name']
-    juegos_recomendados=juegos_recomendados.to_dict(orient="records")
+    #juegos_recomendados=juegos_recomendados.to_dict(orient="records")
     
     return juegos_recomendados
