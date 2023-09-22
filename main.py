@@ -331,6 +331,6 @@ async def recomendacion_juego(id):
     
     # Obtener los nombres de los juegos 5 recomendados
     juegos_recomendados = modelo_render.iloc[indices_juegos_similares]['app_name']
-    #juegos_recomendados=juegos_recomendados.to_dict(orient="records")
+    juegos_recomendados=juegos_recomendados.to_dict()
     
     return juegos_recomendados
