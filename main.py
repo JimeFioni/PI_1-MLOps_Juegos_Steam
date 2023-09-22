@@ -313,25 +313,20 @@ async def recomendacion_juego(id):
     
         -dict Un diccionario con 5 juegos similares 
     """
-    id = int(id)
-    # Filtrar el juego e igualarlo a  su ID
-    juego = modelo_render[modelo_render['id'] == id]
-    # devolver error en caso de vacio
-    if juego.empty:
-        return "El juego con el ID especificado no existe en la base de datos."
+    # Encuentra el índice del juego ingresado por ID
+    juego_indice = modelo_render.index[modelo_render['id'] == id].tolist()[0]
     
-    # Calcular la matriz de similitud coseno
-    similitudes = cosine_similarity(modelo_render.iloc[:,3:])
+    # Extrae las características del juego ingresado
+    juego_caracteristicas = modelo_render.iloc[juego_indice, 3:].values.reshape(1, -1)
     
-    # Calcula la similitud del juego que se ingresa con otros juegos del dataframe
-    similarity_scores = similitudes[modelo_render[modelo_render['id'] == id].index[0]]
+    # Calcula la similitud coseno entre el juego ingresado y todos los demás juegos
+    similitudes_render = cosine_similarity(modelo_render.iloc[:, 3:], juego_caracteristicas)
     
-    # Calcula los índices de los juegos más similares (excluyendo el juego de entrada)
-    indices_juegos_similares = similarity_scores.argsort()[::-1][1:6]
+    # Obtiene los índices de los juegos más similares (excluyendo el juego de entrada)
+    indices_juegos_similares = similitudes_render.argsort(axis=0)[::-1][1:6]
+    indices_juegos_similares = indices_juegos_similares.flatten()[1:]
     
-    # Obtener los nombres de los juegos 5 recomendados
-    juegos_recomendados = modelo_render.iloc[indices_juegos_similares]['app_name']
-    #juegos_recomendados=juegos_recomendados.to_dict()
+    # Obtiene los juegos más similares en función de los índices
+    juegos_similares = modelo_render.iloc[indices_juegos_similares]['app_name']
     
-    return juegos_recomendados
-        
+    return juegos_similares
